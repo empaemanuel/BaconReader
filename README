@@ -1,0 +1,25 @@
+
+Skådespelare som noder 
+Grafen:
+V = skådespelare
+E = sammarbete
+
+En film utgör en fullständig graf. Det finns fler fullständiga grafer än filmer.
+Multigraf eftersom två skådespelare kan ha sammverkat i flera filmer.
+
+Representation:
+Matris
+
+Adjacency matrix tar V^2 utrymme men O(1) access.
+
+Man kan ha skådespelare 
+
+
+
+Filmer som noder
+V = filmer
+E = Har skådespelare som sammverkat i båda filmerna.
+
+En skådespelares historik utgör en fullständig graf.
+Multigraf eftersom två skådespelare kan ha sammverkat i flera filmer.
+
