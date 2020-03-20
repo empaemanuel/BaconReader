@@ -1,10 +1,10 @@
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class Person {
     private String name;
-    //private List<Production> productions = new LinkedList<>();
+    private Set<Production> productions = new HashSet<>();
+    private boolean visited = false;
+    private boolean hasBeenCompared = false;
 
     Person(String name){
         this.name = name;
@@ -15,12 +15,34 @@ public class Person {
     }
 
     public void addProduction(Production production){
-        //productions.add(0,production);
+        productions.add(production);
     }
+
+    public Set<Production> getProductions(){
+        return productions;
+    }
+
+    public int getNumberOfProductions(){
+        return productions.size();
+    }
+
+    public void setVisitedFlag(boolean flag){
+        visited = flag;
+    }
+
+    public boolean hasBeenVisited(){
+        return visited;
+    }
+
+    public void hasBeenCompared(boolean flag){
+        hasBeenCompared = flag;
+    }
+
+    public boolean hasBeenCompared(){return hasBeenCompared;}
 
     @Override
     public String toString() {
-        return name;
+        return name + ": " + Objects.hash(getName());
     }
 
     @Override
