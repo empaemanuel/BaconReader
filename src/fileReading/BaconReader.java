@@ -1,3 +1,5 @@
+package fileReading;
+
 import java.io.*;
 
 /**
@@ -8,7 +10,7 @@ import java.io.*;
  *
  * Användning:
  * <ul>
- * <li>Skapa en instans av BaconReader och skicka med sökvägen till filen ni
+ * <li>Skapa en instans av fileReading.BaconReader och skicka med sökvägen till filen ni
  * vill läsa in.
  * <li>Anropa metoden getNextPart tills ni har fått in allt ni vill ha in, ni
  * tröttnar, eller den returerar null. Det sistnämnda betyder att filen är slut.
