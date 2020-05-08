@@ -1,3 +1,5 @@
+package _old;
+
 public class Edge {
     private Person from, to;
     private Production connection;

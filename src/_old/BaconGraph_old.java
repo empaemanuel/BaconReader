@@ -1,15 +1,15 @@
+package _old;
+
 import java.io.IOException;
 import java.util.*;
-public class BaconGraph {
+public class BaconGraph_old {
 
     private Map<String, Person> persons = new HashMap<>();
     private Map<Production, LinkedList<Person>> personsInProduction = new HashMap<>();
 
     private Person bacon;
 
-    BaconGraph(){};
-
-
+    BaconGraph_old(){};
 
     //===================================================
     //Private help methods for handling data structures
@@ -53,10 +53,9 @@ public class BaconGraph {
     private int breathFirstSearch(Person source, Person target){
         if(source.equals(target)) return 0;
 
-        //LinkedList<Person> visited = new LinkedList<>();
+        //LinkedList<_old.Person> visited = new LinkedList<>();
         LinkedList<Edge> edges = new LinkedList<>();
         LinkedList<Person> queue = new LinkedList<>();
-
 
         queue.add(source);
         Person currentPerson;
@@ -145,7 +144,7 @@ public class BaconGraph {
     //Extracting info from dataset
     //======================================
     /**
-     * Init Graph reads actors/actresses from dataset and stores them as Person-objects  persons list.
+     * Init Graph reads actors/actresses from dataset and stores them as _old.Person-objects  persons list.
      * @param filePath filePath to imdb Actors/Actresses dataset.
      * @param numberOfPersons amount of persons to extract.
      * @param bacon string name of bacon.
@@ -195,9 +194,7 @@ public class BaconGraph {
     }
 
     private Production extractProduction() throws IOException{
-        if(br.getCurrent().type != BaconReader.PartType.TITLE){
-            throw new IllegalArgumentException("Expected TITLE, found " + br.getCurrent().type);
-        }
+
         String title, year = "", id = "";
         title = br.getCurrent().text;
 
