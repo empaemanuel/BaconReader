@@ -110,42 +110,61 @@ public class Graph {
 
 
         queue.add(source);
+        source.setVisited(true);
         Person currentPerson;
         boolean targetFound = false;
 
         while(queue.size() != 0){
+            //move to next node.
             currentPerson = queue.poll();
-            currentPerson.visit();
-            List<Production> productions = currentPerson.getProductions();
-            for(Production prod : productions){
+
+            //go through all completed graphs the person is associated with.
+            //note: a production makes up a completed graph.
+            for(Production prod : currentPerson.getProductions()){
+
+                //if a completed graph has already been visited, jump to next.
                 if(visited.contains(prod)) continue;
+
+                //add production to visited.
                 visited.add(prod);
+
+                //Go through all nodes in completed graph and search for node
                 for(Person adjPerson : adjacencyMap.get(prod)){
-                    if(adjPerson.hasBeenVisited()) continue;
-                    edges.addFirst(new Edge(currentPerson, adjPerson));
+                    //if node not already added to queue, add and make an edge.
+                    if (adjPerson.hasBeenVisited()) continue;
                     queue.add(adjPerson);
-                    if(adjPerson.equals(target)){
-                        //Target found
-                        queue.clear();
+                    edges.push(new Edge(currentPerson, adjPerson));
+                    adjPerson.setVisited(true);
+
+                    //if target is found: clear queue, add edge and stop.
+                    if (adjPerson.equals(target)) {
                         targetFound = true;
+                        queue.clear();
                         break;
                     }
                 }
+                //breaks the outer production loop
                 if(targetFound) break;
             }
         }
 
-        //========================
-        //  generate result list
+        //===============================
+        // backtrack to make result list
         path = new LinkedList<>();
         boolean first = true;
         for(Edge edge : edges){
-            //System.out.println(edge);
+            //first one is target and should always be added.
             if(first) { path.add(edge); first = false; }
+
+            //add middle edges.
             if(path.get(0).getFrom().equals(edge.getTo())) path.addFirst(edge);
+
+            //if source was found break the loop.
             if(path.get(0).getFrom().equals(source)) break;
         }
 
+        // prints the path from source to target.
+        System.out.println("Bacon number: " + path.size());
         for(Edge e : path){
             System.out.println("===" + e.getFrom() + " : " + e.getTo());
             List<Production> common = new ArrayList<>(e.getFrom().getProductions());

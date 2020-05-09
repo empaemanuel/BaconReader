@@ -16,8 +16,8 @@ public class Person {
         return name;
     }
 
-    public void visit(){
-        visited = true;
+    public void setVisited(boolean visited){
+        this.visited = visited;
     }
 
     public void setProductions(List<Production> arr){
@@ -35,5 +35,14 @@ public class Person {
     @Override
     public String toString() {
         return name;
+    }
+
+    private boolean compared;
+    public void setCompared(boolean b) {
+        compared = b;
+    }
+
+    public boolean hasBeenCompared(){
+        return compared;
     }
 }

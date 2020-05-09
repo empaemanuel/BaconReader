@@ -47,7 +47,7 @@ public class GraphTest {
     public void testSearch(){
         g = new Graph(Loader.getPersons());
         g.setSource("Bacon, Kevin (I)");
-        g.setTarget("Hiromachi, Tokiko");
+        g.setTarget("Hirotsu, Yukiko");
         g.findShortestPath();
     }
 
