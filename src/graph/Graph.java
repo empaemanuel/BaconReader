@@ -89,52 +89,53 @@ public class Graph {
      * @throws IllegalStateException if source or target is missing.
      * @return sorted list of edges from source to target.
      */
-    public List<Person> findShortestPath() throws IllegalStateException{
+    public Path findShortestPath() throws IllegalStateException{
         if(target == null || source == null)
             throw new IllegalStateException("Both target and source must be assigned to before a shortest-path can be generated.");
-        breathFirstSearch();
-        return null;
+        List<Edge> edges = breathFirstSearch();
+        return extractPath(edges);
     }
 
-    private LinkedList<Edge> path;
     /**
      * Breath first search from source to target.
      *
      */
-    private void breathFirstSearch(){
-        if(source == target) return;
-
+    private List<Edge> breathFirstSearch() {
+        //if (source == target) return;
         LinkedList<Edge> edges = new LinkedList<>();
         LinkedList<Person> queue = new LinkedList<>();
-        HashSet<Production> visited = new HashSet<>(adjacencyMap.size());
-
+        HashSet<Production> visitedProductions = new HashSet<>(adjacencyMap.size());
+        ArrayList<Boolean> visitedPersons = new ArrayList<>(nodes.size());
+        for(int i = 0; i < nodes.size(); i++){
+            visitedPersons.add(false);
+        }
 
         queue.add(source);
-        source.setVisited(true);
+        visitedPersons.set(source.getIndex(), true);
         Person currentPerson;
         boolean targetFound = false;
 
-        while(queue.size() != 0){
+        while (queue.size() != 0) {
             //move to next node.
             currentPerson = queue.poll();
 
             //go through all completed graphs the person is associated with.
             //note: a production makes up a completed graph.
-            for(Production prod : currentPerson.getProductions()){
+            for (Production prod : currentPerson.getProductions()) {
 
                 //if a completed graph has already been visited, jump to next.
-                if(visited.contains(prod)) continue;
+                if (visitedProductions.contains(prod)) continue;
 
                 //add production to visited.
-                visited.add(prod);
+                visitedProductions.add(prod);
 
                 //Go through all nodes in completed graph and search for node
-                for(Person adjPerson : adjacencyMap.get(prod)){
+                for (Person adjPerson : adjacencyMap.get(prod)) {
                     //if node not already added to queue, add and make an edge.
-                    if (adjPerson.hasBeenVisited()) continue;
+                    if (visitedPersons.get(adjPerson.getIndex())) continue;
                     queue.add(adjPerson);
                     edges.push(new Edge(currentPerson, adjPerson));
-                    adjPerson.setVisited(true);
+                    visitedPersons.set(adjPerson.getIndex(), true);
 
                     //if target is found: clear queue, add edge and stop.
                     if (adjPerson.equals(target)) {
@@ -144,36 +145,26 @@ public class Graph {
                     }
                 }
                 //breaks the outer production loop
-                if(targetFound) break;
+                if (targetFound) break;
             }
         }
+        return edges;
+    }
 
+    private Path extractPath(List<Edge> edges) {
         //===============================
         // backtrack to make result list
-        path = new LinkedList<>();
+        LinkedList<Edge> path = new LinkedList<>();
         boolean first = true;
         for(Edge edge : edges){
             //first one is target and should always be added.
             if(first) { path.add(edge); first = false; }
-
             //add middle edges.
             if(path.get(0).getFrom().equals(edge.getTo())) path.addFirst(edge);
-
             //if source was found break the loop.
             if(path.get(0).getFrom().equals(source)) break;
         }
-
-        // prints the path from source to target.
-        System.out.println("Bacon number: " + path.size());
-        for(Edge e : path){
-            System.out.println("===" + e.getFrom() + " : " + e.getTo());
-            List<Production> common = new ArrayList<>(e.getFrom().getProductions());
-            common.retainAll(e.getTo().getProductions());
-            for(Production p : common){
-                System.out.println(p);
-            }
-        }
-
+        return new Path(path);
     }
 
     /**

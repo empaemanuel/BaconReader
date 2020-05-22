@@ -1,5 +1,6 @@
 import fileReading.Loader;
 import graph.Graph;
+import graph.Path;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -30,26 +31,90 @@ public class GraphTest {
 
     private Graph g;
     @Test
-    public void testSetSourceSuccess(){
+    public void testSetSource(){
         g = new Graph(Loader.getPersons());
         g.setSource("Bacon, Kevin (II)");
         assertEquals("Bacon, Kevin (II)", g.getSource());
     }
 
     @Test
-    public void testSetTargetSuccess(){
+    public void testSetTarget(){
         g = new Graph(Loader.getPersons());
         g.setTarget("Bacon, Kevin (II)");
         assertEquals("Bacon, Kevin (II)", g.getTarget());
     }
 
     @Test
-    public void testSearch(){
-        g = new Graph(Loader.getPersons());
-        g.setSource("Bacon, Kevin (I)");
-        g.setTarget("Hirotsu, Yukiko");
-        g.findShortestPath();
+    public void testConsistency(){
+        String source = "Bacon, Kevin (I)";
+        String target = "Hirotsu, Yukiko";
+        g = new Graph(Loader.getCopyOfPersons());
+        g.setSource(source);
+        g.setTarget(target);
+        Path p = g.findShortestPath();
+        p.printPath();
+        assertEquals(3, p.getBaconNumber());
+        assertEquals(source, p.getSource());
+        assertEquals(target, p.getTarget());
     }
+
+    @Test
+    public void testSearchShortReflexive(){
+        String source = "Hirotsu, Yukiko";
+        String target = "Bacon, Kevin (I)";
+        g = new Graph(Loader.getCopyOfPersons());
+        g.setSource(source);
+        g.setTarget(target);
+        Path p = g.findShortestPath();
+        assertEquals(3, p.getBaconNumber());
+        assertEquals(source, p.getSource());
+        assertEquals(target, p.getTarget());
+    }
+
+
+    @Test
+    public void testSearchLong(){
+        String source = "Aalto, Tero (I)";
+        String target = "Johansson, Marika (I)";
+        g = new Graph(Loader.getCopyOfPersons());
+        g.setSource(source);
+        g.setTarget(target);
+        Path p = g.findShortestPath();
+        p.printPath();
+        assertEquals(source, p.getSource());
+        assertEquals(target, p.getTarget());
+        assertEquals(1, p.getBaconNumber());
+
+        target = "Johansson, Frida (III)";
+        g.setTarget(target);
+        p = g.findShortestPath();
+        p.printPath();
+        assertEquals(source, p.getSource());
+        assertEquals(target, p.getTarget());
+        assertEquals(2, p.getBaconNumber());
+        source = "Johansson, Marika (I)";
+        g.setSource(source);
+        p = g.findShortestPath();
+        assertEquals(1, p.getBaconNumber());
+        assertEquals(source, p.getSource());
+        assertEquals(target, p.getTarget());
+    }
+
+
+    @Test
+    public void testSearchLongB(){
+        String source = "Aalto, Tero (I)";
+        String target = "Johansson, Frida (III)";
+        g = new Graph(Loader.getCopyOfPersons());
+        g.setSource(source);
+        g.setTarget(target);
+        Path p = g.findShortestPath();
+        p.printPath();
+        assertEquals(source, p.getSource());
+        assertEquals(target, p.getTarget());
+        assertEquals(2, p.getBaconNumber());
+    }
+
 
 
 

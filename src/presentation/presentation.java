@@ -1,15 +1,15 @@
 package presentation;
 
+import fileReading.Loader;
 import javafx.application.Application;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -29,6 +29,8 @@ public class presentation extends Application {
         grid.setHgap(10);
         grid.setVgap(10);
 
+        Loader.load("actors.list", "actresses.list", 3610770);
+
         Button searchButton = new Button("Find bacon number");
         searchButton.setOnAction(new findBaconNumberHandler());
 
@@ -42,12 +44,12 @@ public class presentation extends Application {
         stage.show();
     }
 
-    private ComboBox<?> source;
-    private ComboBox<?> target;
+    private TextField source;
+    private TextField target;
+
     private GridPane getSearchBox(){
-        //ObservableList<?> oList = FXCollections.observableArrayList(graph.getPersons());
-        //source = getNewComboBox(oList);
-        //target = getNewComboBox(oList);
+        source = new TextField("Source");
+        target = new TextField("Target");
         final GridPane grid = new GridPane();
         grid.add(getNewTitleLabel("Source", 20), 0,0);
         grid.add(source,1,0);
@@ -55,12 +57,6 @@ public class presentation extends Application {
         grid.add(target,1,1);
 
         return grid;
-    }
-
-    private ComboBox<?> getNewComboBox(ObservableList<?> o) {
-        ComboBox<?> cb = new ComboBox<>(o);
-        cb.setPrefWidth(200);
-        return cb;
     }
 
     private Label getNewTitleLabel(String text, int size) {
@@ -78,9 +74,6 @@ public class presentation extends Application {
     private class findBaconNumberHandler implements EventHandler<ActionEvent> {
         @Override
         public void handle(ActionEvent actionEvent) {
-            if(source.getSelectionModel().isEmpty() || target.getSelectionModel().isEmpty()){
-                return;
-            }
             System.out.println("make search");
         }
     }

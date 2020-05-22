@@ -17,8 +17,20 @@ public class Loader implements Runnable {
      */
     public static boolean hasLoadedData;
 
+    /**
+     * Returns list of persons, if running multiple threads, use getCopyOfPersons()
+     * @return list of persons.
+     */
     public static List<Person> getPersons(){
         return persons;
+    }
+
+    /**
+     * Should be used if running multiple threads.
+     * @return new cloned list of persons
+     */
+    public static List<Person> getCopyOfPersons(){
+        return new ArrayList<>(persons);
     }
 
     /**

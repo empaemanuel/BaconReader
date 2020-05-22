@@ -14,7 +14,7 @@ public class LoaderTest {
 
     @Test
     public void testNumberOfPersons(){
-        Loader.load(actorsFilePath, actressesFilePath, actorsSize + actressesSize);
+        Loader loader = new Loader(actorsFilePath, actressesFilePath, actorsSize + actressesSize);
         assertEquals(actorsSize+actressesSize, Loader.getPersons().size());
     }
 

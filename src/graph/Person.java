@@ -5,6 +5,7 @@ import java.util.List;
 
 public class Person {
     private String name;
+    private int index;
     private List<Production> productions = new ArrayList<>();
     private boolean visited;
 
@@ -12,12 +13,16 @@ public class Person {
         this.name = name;
     }
 
+    public void setIndex(int index){
+        this.index = index;
+    }
+
     public String getName() {
         return name;
     }
 
-    public void setVisited(boolean visited){
-        this.visited = visited;
+    public int getIndex(){
+        return index;
     }
 
     public void setProductions(List<Production> arr){
@@ -28,21 +33,9 @@ public class Person {
         return productions;
     }
 
-    public boolean hasBeenVisited() {
-        return visited;
-    }
-
     @Override
     public String toString() {
         return name;
     }
 
-    private boolean compared;
-    public void setCompared(boolean b) {
-        compared = b;
-    }
-
-    public boolean hasBeenCompared(){
-        return compared;
-    }
 }
