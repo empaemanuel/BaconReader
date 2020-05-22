@@ -42,4 +42,20 @@ public class Path {
         }
     }
 
+    @Override
+    public String toString() {
+        String s =
+                "FROM: " + from.getName() + "\n" +
+                        "TO: " + to.getName() + "\n" +
+                        "Bacon number: " + getBaconNumber() + "\n";
+        for(Edge e : path){
+            s += e.getFrom() + " --> " + e.getTo() + "\n";
+            List<Production> common = new ArrayList<>(e.getFrom().getProductions());
+            common.retainAll(e.getTo().getProductions());
+            for(Production p : common){
+                s += "\t* " + p + "\n";
+            }
+        }
+        return s;
+    }
 }

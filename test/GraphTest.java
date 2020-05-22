@@ -22,24 +22,25 @@ public class GraphTest {
     private static final int totalNumberOfProductions = 667559;
     private static final String actorsFilePath = "test/actors_short.list";
     private static final String actressesFilePath = "test/actresses_short.list";
-
+    private static Loader loader;
 
     @BeforeAll
     public static void testBuild(){
-        Loader.load(actorsFilePath, actressesFilePath,actorsSize+actressesSize);
+        loader = new Loader(actorsFilePath, actressesFilePath,actorsSize, actressesSize);
+        loader.load();
     }
 
     private Graph g;
     @Test
     public void testSetSource(){
-        g = new Graph(Loader.getPersons());
+        g = new Graph(loader.getPersons());
         g.setSource("Bacon, Kevin (II)");
         assertEquals("Bacon, Kevin (II)", g.getSource());
     }
 
     @Test
     public void testSetTarget(){
-        g = new Graph(Loader.getPersons());
+        g = new Graph(loader.getPersons());
         g.setTarget("Bacon, Kevin (II)");
         assertEquals("Bacon, Kevin (II)", g.getTarget());
     }
@@ -48,11 +49,10 @@ public class GraphTest {
     public void testConsistency(){
         String source = "Bacon, Kevin (I)";
         String target = "Hirotsu, Yukiko";
-        g = new Graph(Loader.getCopyOfPersons());
+        g = new Graph(loader.getCopyOfPersons());
         g.setSource(source);
         g.setTarget(target);
         Path p = g.findShortestPath();
-        p.printPath();
         assertEquals(3, p.getBaconNumber());
         assertEquals(source, p.getSource());
         assertEquals(target, p.getTarget());
@@ -62,7 +62,7 @@ public class GraphTest {
     public void testSearchShortReflexive(){
         String source = "Hirotsu, Yukiko";
         String target = "Bacon, Kevin (I)";
-        g = new Graph(Loader.getCopyOfPersons());
+        g = new Graph(loader.getCopyOfPersons());
         g.setSource(source);
         g.setTarget(target);
         Path p = g.findShortestPath();
@@ -76,11 +76,10 @@ public class GraphTest {
     public void testSearchLong(){
         String source = "Aalto, Tero (I)";
         String target = "Johansson, Marika (I)";
-        g = new Graph(Loader.getCopyOfPersons());
+        g = new Graph(loader.getCopyOfPersons());
         g.setSource(source);
         g.setTarget(target);
         Path p = g.findShortestPath();
-        p.printPath();
         assertEquals(source, p.getSource());
         assertEquals(target, p.getTarget());
         assertEquals(1, p.getBaconNumber());
@@ -88,7 +87,6 @@ public class GraphTest {
         target = "Johansson, Frida (III)";
         g.setTarget(target);
         p = g.findShortestPath();
-        p.printPath();
         assertEquals(source, p.getSource());
         assertEquals(target, p.getTarget());
         assertEquals(2, p.getBaconNumber());
@@ -105,11 +103,10 @@ public class GraphTest {
     public void testSearchLongB(){
         String source = "Aalto, Tero (I)";
         String target = "Johansson, Frida (III)";
-        g = new Graph(Loader.getCopyOfPersons());
+        g = new Graph(loader.getCopyOfPersons());
         g.setSource(source);
         g.setTarget(target);
         Path p = g.findShortestPath();
-        p.printPath();
         assertEquals(source, p.getSource());
         assertEquals(target, p.getTarget());
         assertEquals(2, p.getBaconNumber());

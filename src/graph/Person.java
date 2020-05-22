@@ -7,7 +7,6 @@ public class Person {
     private String name;
     private int index;
     private List<Production> productions = new ArrayList<>();
-    private boolean visited;
 
     public Person(String name) {
         this.name = name;
@@ -29,6 +28,10 @@ public class Person {
         productions = arr;
     }
 
+    public void addProduction(Production p){
+        productions.add(p);
+    }
+
     public List<Production> getProductions(){
         return productions;
     }
@@ -38,4 +41,11 @@ public class Person {
         return name;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return name.equals(person.name);
+    }
 }
