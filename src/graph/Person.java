@@ -5,31 +5,35 @@ import java.util.List;
 
 public class Person {
     private String name;
+    private int index;
     private List<Production> productions = new ArrayList<>();
-    private boolean visited;
 
     public Person(String name) {
         this.name = name;
+    }
+
+    public void setIndex(int index){
+        this.index = index;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setVisited(boolean visited){
-        this.visited = visited;
+    public int getIndex(){
+        return index;
     }
 
     public void setProductions(List<Production> arr){
         productions = arr;
     }
 
-    public List<Production> getProductions(){
-        return productions;
+    public void addProduction(Production p){
+        productions.add(p);
     }
 
-    public boolean hasBeenVisited() {
-        return visited;
+    public List<Production> getProductions(){
+        return productions;
     }
 
     @Override
@@ -37,12 +41,11 @@ public class Person {
         return name;
     }
 
-    private boolean compared;
-    public void setCompared(boolean b) {
-        compared = b;
-    }
-
-    public boolean hasBeenCompared(){
-        return compared;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return name.equals(person.name);
     }
 }

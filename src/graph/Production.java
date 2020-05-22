@@ -4,7 +4,6 @@ import java.util.Objects;
 
 public class Production {
     private String title, year, id;
-    private boolean visited;
 
     public Production(String title, String year, String id) {
         this.title = title;
@@ -27,16 +26,10 @@ public class Production {
         return Objects.hash(title, year, id);
     }
 
-    public boolean isVisited() {
-        return visited;
-    }
-
-    public void setVisited(boolean visited){
-        this.visited = visited;
-    }
-
     @Override
     public String toString() {
         return title + " " + year + " " + id;
     }
+
+
 }

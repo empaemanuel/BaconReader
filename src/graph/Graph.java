@@ -1,14 +1,19 @@
 package graph;
 
-import java.util.*;
+import presentation.Presentation;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Graph of persons connected by productions. Each person holds a list of productions that it
  * is associated with. A production makes up for a complete sub-graph of persons.
  * The graph uses a breath first search to find the shortest path between two nodes.
  */
-public class Graph {
-
+public class Graph implements Runnable{
+    Presentation presentation;
     /**
      * A list of all nodes.
      */
@@ -18,9 +23,21 @@ public class Graph {
      * Constructs a new graph and loads adjacency list.
      * @param nodes list of all nodes in the bacon graph.
      */
+    public Graph(List<Person> nodes, Presentation presentation) {
+        this.nodes = nodes;
+        this.presentation = presentation;
+        //new Thread(this::build).start();
+        //populateCompletedGraphs();
+    }
+
     public Graph(List<Person> nodes) {
         this.nodes = nodes;
         //new Thread(this::build).start();
+        populateCompletedGraphs();
+    }
+
+    @Override
+    public void run() {
         populateCompletedGraphs();
     }
 
@@ -28,12 +45,15 @@ public class Graph {
      * Goes through every production and to form completed sub-graphs
      */
     private void populateCompletedGraphs(){
+        System.out.println("Loading adjacency map...");
         for(Person person : nodes){
             for(Production prod : person.getProductions()){
                 adjacencyMap.putIfAbsent(prod, new LinkedList<>());
-                adjacencyMap.get(prod).add(person);
+                adjacencyMap.get(prod).addFirst(person);
             }
         }
+        System.out.println("Adjacency map loaded!");
+        if(presentation!=null)presentation.enableSearch();
     }
 
     /**
@@ -42,7 +62,7 @@ public class Graph {
      * List<Integer> is a collection of nodes who all are associated by the key and together creates a completed graph.
      * The nodes are stored as integers representing the index of which they can be found at in the nodes collection.
      */
-    private HashMap<Production, List<Person>> adjacencyMap = new HashMap<>(700011);
+    private HashMap<Production, LinkedList<Person>> adjacencyMap = new HashMap<>(4000000);
 
     private Person source; //Bacon
     private Person target;
@@ -89,52 +109,56 @@ public class Graph {
      * @throws IllegalStateException if source or target is missing.
      * @return sorted list of edges from source to target.
      */
-    public List<Person> findShortestPath() throws IllegalStateException{
+    public Path findShortestPath() throws IllegalStateException{
         if(target == null || source == null)
             throw new IllegalStateException("Both target and source must be assigned to before a shortest-path can be generated.");
-        breathFirstSearch();
-        return null;
+        System.out.println("Starting breath first search");
+        List<Edge> edges = breathFirstSearch();
+        System.out.println("Breath first search done!");
+        return extractPath(edges);
     }
 
-    private LinkedList<Edge> path;
     /**
      * Breath first search from source to target.
      *
      */
-    private void breathFirstSearch(){
-        if(source == target) return;
-
+    private List<Edge> breathFirstSearch() {
         LinkedList<Edge> edges = new LinkedList<>();
         LinkedList<Person> queue = new LinkedList<>();
-        HashSet<Production> visited = new HashSet<>(adjacencyMap.size());
+        HashSet<Production> visitedProductions = new HashSet<>(adjacencyMap.size());
+        if (source == target){
+            edges.add(new Edge(source, target));
+            return edges;
+        };
+        boolean[] visitedPersons = new boolean[nodes.size()];
 
 
         queue.add(source);
-        source.setVisited(true);
+        visitedPersons[source.getIndex()] = true;
         Person currentPerson;
         boolean targetFound = false;
 
-        while(queue.size() != 0){
+        while (queue.size() != 0) {
             //move to next node.
             currentPerson = queue.poll();
 
             //go through all completed graphs the person is associated with.
             //note: a production makes up a completed graph.
-            for(Production prod : currentPerson.getProductions()){
+            for (Production prod : currentPerson.getProductions()) {
 
                 //if a completed graph has already been visited, jump to next.
-                if(visited.contains(prod)) continue;
+                if (visitedProductions.contains(prod)) continue;
 
                 //add production to visited.
-                visited.add(prod);
+                visitedProductions.add(prod);
 
                 //Go through all nodes in completed graph and search for node
-                for(Person adjPerson : adjacencyMap.get(prod)){
+                for (Person adjPerson : adjacencyMap.get(prod)) {
                     //if node not already added to queue, add and make an edge.
-                    if (adjPerson.hasBeenVisited()) continue;
+                    if (visitedPersons[adjPerson.getIndex()]) continue;
                     queue.add(adjPerson);
                     edges.push(new Edge(currentPerson, adjPerson));
-                    adjPerson.setVisited(true);
+                    visitedPersons[adjPerson.getIndex()] = true;
 
                     //if target is found: clear queue, add edge and stop.
                     if (adjPerson.equals(target)) {
@@ -144,36 +168,26 @@ public class Graph {
                     }
                 }
                 //breaks the outer production loop
-                if(targetFound) break;
+                if (targetFound) break;
             }
         }
+        return edges;
+    }
 
+    private Path extractPath(List<Edge> edges) {
         //===============================
         // backtrack to make result list
-        path = new LinkedList<>();
+        LinkedList<Edge> path = new LinkedList<>();
         boolean first = true;
         for(Edge edge : edges){
             //first one is target and should always be added.
             if(first) { path.add(edge); first = false; }
-
-            //add middle edges.
-            if(path.get(0).getFrom().equals(edge.getTo())) path.addFirst(edge);
-
             //if source was found break the loop.
-            if(path.get(0).getFrom().equals(source)) break;
+            if (path.get(0).getFrom().equals(source)) break;
+            //add middle edges.
+            if (path.get(0).getFrom().equals(edge.getTo())) path.addFirst(edge);
         }
-
-        // prints the path from source to target.
-        System.out.println("Bacon number: " + path.size());
-        for(Edge e : path){
-            System.out.println("===" + e.getFrom() + " : " + e.getTo());
-            List<Production> common = new ArrayList<>(e.getFrom().getProductions());
-            common.retainAll(e.getTo().getProductions());
-            for(Production p : common){
-                System.out.println(p);
-            }
-        }
-
+        return new Path(path);
     }
 
     /**
