@@ -3,6 +3,13 @@ package graph;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * Represent a path from Source to target.
+ * Each path consists of edges.
+ * The bacon-number is the amount of edges in a path, except for when source equals target when the bacon-number is 0.
+ * Use toString to get a string representation of a printable path. Use printPath() to print to console.
+ */
 public class Path {
     private List<Edge> path;
     private Person from;
@@ -23,6 +30,7 @@ public class Path {
     }
 
     public int getBaconNumber(){
+        if(from.equals(to)) return 0;
         return path.size();
     }
 

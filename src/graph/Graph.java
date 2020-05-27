@@ -2,14 +2,13 @@ package graph;
 
 import presentation.Presentation;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
- * Graph of persons connected by productions. Each person holds a list of productions that it
- * is associated with. A production makes up for a complete sub-graph of persons.
+ * Non-Directional multi edge graph where each node is a Person and each edge is relationship between two persons by
+ * some production. A production makes up for a completed graph. Nodes are considered static as they
+ * are loaded from files and the graph is adjusted for that specific set of files.
+ * Nodes are stored in an array for O(1) inserts during creating and O(1) access by index during search.
  * The graph uses a breath first search to find the shortest path between two nodes.
  */
 public class Graph implements Runnable{
@@ -48,6 +47,7 @@ public class Graph implements Runnable{
         System.out.println("Loading adjacency map...");
         for(Person person : nodes){
             for(Production prod : person.getProductions()){
+
                 adjacencyMap.putIfAbsent(prod, new LinkedList<>());
                 adjacencyMap.get(prod).addFirst(person);
             }
@@ -61,8 +61,9 @@ public class Graph implements Runnable{
      * a unique name. The key set represents all unique edges in the graph.
      * List<Integer> is a collection of nodes who all are associated by the key and together creates a completed graph.
      * The nodes are stored as integers representing the index of which they can be found at in the nodes collection.
+     * The initial capacity is 1.25% higher than the total amount of productions to prevent rehashing during insert.
      */
-    private HashMap<Production, LinkedList<Person>> adjacencyMap = new HashMap<>(4000000);
+    private HashMap<Production, LinkedList<Person>> adjacencyMap = new HashMap<>(4814365);
 
     private Person source; //Bacon
     private Person target;
@@ -120,12 +121,14 @@ public class Graph implements Runnable{
 
     /**
      * Breath first search from source to target.
-     *
+     * @Returns a stack of edges with target at top and source at bottom.
      */
     private List<Edge> breathFirstSearch() {
         LinkedList<Edge> edges = new LinkedList<>();
         LinkedList<Person> queue = new LinkedList<>();
         HashSet<Production> visitedProductions = new HashSet<>(adjacencyMap.size());
+
+
         if (source == target){
             edges.add(new Edge(source, target));
             return edges;
@@ -174,6 +177,12 @@ public class Graph implements Runnable{
         return edges;
     }
 
+    /***
+     * takes a stack of edges and returns an instance of Path.
+     * A path has list of Edges going from source to target.
+     * @param edges
+     * @return
+     */
     private Path extractPath(List<Edge> edges) {
         //===============================
         // backtrack to make result list

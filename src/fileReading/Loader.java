@@ -9,9 +9,13 @@ import java.util.*;
 
 /**
  * Extracts all actors, actresses and respective movies from the dataset using the fileReading.BaconReader class.
- * Depends on class Structure to store and implement the extracted data.
  */
 public class Loader implements Runnable{
+    /**
+     * List representation of persons.
+     */
+    private List<Person> persons;
+
     /**
      * Returns list of persons, if running multiple threads, use getCopyOfPersons()
      * @return list of persons.
@@ -28,11 +32,6 @@ public class Loader implements Runnable{
         return new ArrayList<>(persons);
     }
 
-    /**
-     * List representation of persons.
-     */
-    private List<Person> persons;
-
     public Loader(String actorsFilePath, String actressesFilePath, int numberOfActors, int numberOfActresses){
         this.actorsFilePath = actorsFilePath;
         this.actressesFilePath = actressesFilePath;
@@ -48,6 +47,9 @@ public class Loader implements Runnable{
         load();
     }
 
+    /**
+     * The link is set up for updating the progress bar at the presentation class.
+     */
     private Presentation presentation;
     public void setPresentation(Presentation presentation){
         this.presentation = presentation;
@@ -77,12 +79,22 @@ public class Loader implements Runnable{
         System.out.println("Files successfully loaded");
     }
 
+    /**
+     * Adds person to the person list.
+     * @param p
+     */
     private synchronized void add(Person p){
         p.setIndex(persons.size());
         persons.add(p);
     }
 
-    private HashMap<Production, Production> productions = new HashMap<>(4000000);
+    /***
+     * This map is used for preventing duplicate instances of the same object.
+     * There are 3610773 non-duplicate productions. The initial capacity is
+     * first prime number higher than 1.25% of total amount for a healthy load factor without having
+     * to rehash the table.
+     */
+    private HashMap<Production, Production> productions = new HashMap<>(4814365);
     private int productionsCount = 0;
     private synchronized Production getProduction(Production p){
         Production result = productions.putIfAbsent(p, p);
@@ -97,6 +109,10 @@ public class Loader implements Runnable{
         return productionsCount;
     }
 
+
+    /**
+     * Inner class to load one single file.
+     */
     private class FileLoader implements Runnable{
         /**
          * Bacon reader is a scanner and tokenizer used to extract actors/actresses and movies/productions from the file.
